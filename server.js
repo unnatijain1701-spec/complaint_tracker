@@ -12,6 +12,11 @@ const app = express();
 
 app.use(express.json());
 app.use(sessionMiddleware);
+
+app.get('/', (req, res) => {
+  res.redirect(req.session.user ? '/complaints.html' : '/login.html');
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', requireAuth, express.static(UPLOAD_DIR));
 
