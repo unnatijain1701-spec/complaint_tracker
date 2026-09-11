@@ -10,6 +10,11 @@ const { sessionMiddleware, requireAuth } = require('./middleware/session');
 
 const app = express();
 
+// Railway (and most PaaS platforms) terminate HTTPS at a proxy and forward
+// plain HTTP internally. Without this, Express thinks every request is
+// insecure, and express-session silently refuses to send the Secure cookie.
+app.set('trust proxy', 1);
+
 app.use(express.json());
 app.use(sessionMiddleware);
 
