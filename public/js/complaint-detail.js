@@ -56,7 +56,7 @@ async function loadComplaint() {
       ['SKU', c.sku],
       ['Invoice Number', c.invoice_number || '—'],
       ['Plant', c.plant],
-      ['Complaint Type', c.complaint_type],
+      ['Complaint Type', c.complaint_type === 'Other' && c.complaint_type_other ? `Other: ${c.complaint_type_other}` : c.complaint_type],
       ['Channel', c.channel],
       ['Description', c.description],
       ['Priority (suggested)', c.priority_suggested || '—'],

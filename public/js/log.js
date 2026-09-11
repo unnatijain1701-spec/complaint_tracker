@@ -19,6 +19,17 @@ async function loadCustomerOptions() {
 }
 loadCustomerOptions();
 
+const complaintTypeSelect = document.getElementById('complaint-type');
+const complaintTypeOtherLabel = document.getElementById('complaint-type-other-label');
+const complaintTypeOtherInput = document.getElementById('complaint-type-other');
+
+complaintTypeSelect.addEventListener('change', () => {
+  const isOther = complaintTypeSelect.value === 'Other';
+  complaintTypeOtherLabel.style.display = isOther ? '' : 'none';
+  complaintTypeOtherInput.required = isOther;
+  if (!isOther) complaintTypeOtherInput.value = '';
+});
+
 function debounce(fn, delayMs) {
   let timer;
   return (...args) => {

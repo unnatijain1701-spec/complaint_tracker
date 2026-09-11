@@ -1,0 +1,1 @@
+ALTER TABLE complaints ADD COLUMN complaint_type_other TEXT;

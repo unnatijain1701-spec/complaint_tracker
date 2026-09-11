@@ -96,6 +96,9 @@ function validateComplaintInput(body) {
   if (body.complaint_type && !COMPLAINT_TYPES.includes(body.complaint_type)) {
     errors.push(`complaint_type must be one of: ${COMPLAINT_TYPES.join(', ')}`);
   }
+  if (body.complaint_type === 'Other' && (!body.complaint_type_other || !body.complaint_type_other.trim())) {
+    errors.push('complaint_type_other is required when complaint_type is Other');
+  }
   if (body.channel && !CHANNELS.includes(body.channel)) {
     errors.push(`channel must be one of: ${CHANNELS.join(', ')}`);
   }
@@ -146,6 +149,7 @@ router.post('/', uploadImages, async (req, res, next) => {
       sku,
       plant,
       complaint_type,
+      complaint_type_other,
       channel,
       description,
       invoice_number,
@@ -169,12 +173,14 @@ router.post('/', uploadImages, async (req, res, next) => {
 
       const complaintResult = await client.query(
         `INSERT INTO complaints
-          (date_received, customer_name, sku, plant, complaint_type, channel, description, invoice_number,
-           assigned_to, logged_by, priority_suggested, priority_final, sla_due_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+          (date_received, customer_name, sku, plant, complaint_type, complaint_type_other, channel, description,
+           invoice_number, assigned_to, logged_by, priority_suggested, priority_final, sla_due_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
          RETURNING *`,
         [
-          date_received, customer_name, sku, plant, complaint_type, channel, description, invoice_number,
+          date_received, customer_name, sku, plant, complaint_type,
+          complaint_type === 'Other' ? complaint_type_other : null,
+          channel, description, invoice_number,
           assigned_to || null, logged_by || null, prioritySuggested, finalPriority, slaDueAt,
         ]
       );
@@ -229,6 +235,7 @@ const EXPORT_COLUMNS = [
   { header: 'SKU', key: 'sku', width: 16 },
   { header: 'Plant', key: 'plant', width: 12 },
   { header: 'Complaint Type', key: 'complaint_type', width: 18 },
+  { header: 'Complaint Type (Other)', key: 'complaint_type_other', width: 20 },
   { header: 'Channel', key: 'channel', width: 12 },
   { header: 'Description', key: 'description', width: 40 },
   { header: 'Invoice Number', key: 'invoice_number', width: 18 },

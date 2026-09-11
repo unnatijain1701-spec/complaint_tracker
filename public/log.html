@@ -50,7 +50,7 @@
       </label>
       <label>
         Complaint Type
-        <select name="complaint_type" required>
+        <select name="complaint_type" id="complaint-type" required>
           <option value="">Select type</option>
           <option>Quality</option>
           <option>Quantity Shortfall</option>
@@ -60,6 +60,10 @@
           <option>Spoilage</option>
           <option>Other</option>
         </select>
+      </label>
+      <label id="complaint-type-other-label" style="display:none">
+        Please specify
+        <input type="text" name="complaint_type_other" id="complaint-type-other" />
       </label>
       <label>
         Channel
