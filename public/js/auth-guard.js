@@ -11,6 +11,18 @@
     const userInfoEl = document.getElementById('user-info');
     if (userInfoEl) userInfoEl.textContent = user.name;
 
+    if (user.is_admin) {
+      const nav = document.querySelector('nav');
+      const spacer = document.querySelector('nav .nav-spacer');
+      if (nav && spacer && !document.getElementById('manage-users-link')) {
+        const link = document.createElement('a');
+        link.id = 'manage-users-link';
+        link.href = 'users.html';
+        link.textContent = 'Manage Users';
+        nav.insertBefore(link, spacer);
+      }
+    }
+
     const logoutLink = document.getElementById('logout-link');
     if (logoutLink) {
       logoutLink.addEventListener('click', async (e) => {

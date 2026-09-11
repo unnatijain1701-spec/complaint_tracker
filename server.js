@@ -5,8 +5,9 @@ const path = require('path');
 const complaintsRouter = require('./routes/complaints');
 const dashboardRouter = require('./routes/dashboard');
 const authRouter = require('./routes/auth');
+const usersRouter = require('./routes/users');
 const { UPLOAD_DIR } = require('./middleware/upload');
-const { sessionMiddleware, requireAuth } = require('./middleware/session');
+const { sessionMiddleware, requireAuth, requireAdmin } = require('./middleware/session');
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use('/uploads', requireAuth, express.static(UPLOAD_DIR));
 app.use('/api', authRouter);
 app.use('/api/complaints', requireAuth, complaintsRouter);
 app.use('/api/dashboard', requireAuth, dashboardRouter);
+app.use('/api/users', requireAdmin, usersRouter);
 
 app.get('/api/health', (req, res) => {
   res.json({ ok: true });

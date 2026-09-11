@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const db = require('../db');
+const { requireAuth } = require('../middleware/session');
 
 const router = express.Router();
 
@@ -22,8 +23,8 @@ router.post('/login', async (req, res, next) => {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    req.session.user = { id: user.id, name: user.name, email: user.email };
-    res.json({ id: user.id, name: user.name, email: user.email });
+    req.session.user = { id: user.id, name: user.name, email: user.email, is_admin: user.is_admin };
+    res.json(req.session.user);
   } catch (err) {
     next(err);
   }
@@ -37,10 +38,7 @@ router.post('/logout', (req, res, next) => {
   });
 });
 
-router.get('/session', (req, res) => {
-  if (!req.session.user) {
-    return res.status(401).json({ error: 'Not authenticated' });
-  }
+router.get('/session', requireAuth, (req, res) => {
   res.json(req.session.user);
 });
 
