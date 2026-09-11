@@ -20,24 +20,24 @@
     <div id="message"></div>
     <form id="complaint-form" enctype="multipart/form-data">
       <label>
-        Date Received
+        Date Received <span class="required-mark">*</span>
         <input type="date" name="date_received" required />
       </label>
       <label>
-        Customer Name
+        Customer Name <span class="required-mark">*</span>
         <input type="text" name="customer_name" list="customer-options" autocomplete="off" required />
         <datalist id="customer-options"></datalist>
       </label>
       <label>
-        SKU
+        SKU <span class="required-mark">*</span>
         <input type="text" name="sku" required />
       </label>
       <label>
-        Invoice Number
+        Invoice Number <span class="required-mark">*</span>
         <input type="text" name="invoice_number" required />
       </label>
       <label>
-        Plant
+        Plant <span class="required-mark">*</span>
         <select name="plant" required>
           <option value="">Select plant</option>
           <option>Rai</option>
@@ -49,7 +49,7 @@
         </select>
       </label>
       <label>
-        Complaint Type
+        Complaint Type <span class="required-mark">*</span>
         <select name="complaint_type" id="complaint-type" required>
           <option value="">Select type</option>
           <option>Quality</option>
@@ -62,11 +62,11 @@
         </select>
       </label>
       <label id="complaint-type-other-label" style="display:none">
-        Please specify
+        Please specify <span class="required-mark">*</span>
         <input type="text" name="complaint_type_other" id="complaint-type-other" />
       </label>
       <label>
-        Channel
+        Channel <span class="required-mark">*</span>
         <select name="channel" required>
           <option value="">Select channel</option>
           <option>Email</option>
@@ -77,7 +77,7 @@
         </select>
       </label>
       <label>
-        Description
+        Description <span class="required-mark">*</span>
         <textarea name="description" required></textarea>
       </label>
       <label>

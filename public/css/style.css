@@ -171,3 +171,7 @@ tr.overdue {
 .priority-High { background: var(--color-high); }
 .priority-Medium { background: var(--color-medium); }
 .priority-Low { background: var(--color-low); }
+
+.required-mark {
+  color: var(--color-critical);
+}
