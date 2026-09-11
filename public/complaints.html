@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Complaints — Urban Harvest</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <nav>
+    <a href="log.html">Log Complaint</a>
+    <a href="complaints.html">Complaints</a>
+    <a href="dashboard.html">Dashboard</a>
+    <span class="nav-spacer"></span>
+    <span id="user-info"></span>
+    <a href="#" id="logout-link">Log Out</a>
+  </nav>
+  <main>
+    <h1>Complaints</h1>
+    <div class="filters">
+      <input type="text" id="filter-search" placeholder="Search customer / SKU / description" style="min-width:220px" />
+      <input type="text" id="filter-sku" placeholder="SKU" />
+      <input type="text" id="filter-customer" placeholder="Customer" />
+      <select id="filter-plant">
+        <option value="">All plants</option>
+        <option>Rai</option>
+        <option>Jaipur</option>
+        <option>Bangalore</option>
+        <option>Mumbai</option>
+        <option>Hyderabad</option>
+        <option>Other</option>
+      </select>
+      <select id="filter-status">
+        <option value="">All statuses</option>
+        <option>Open</option>
+        <option>In Progress</option>
+        <option>Resolved</option>
+        <option>Closed</option>
+      </select>
+      <select id="filter-priority">
+        <option value="">All priorities</option>
+        <option>Critical</option>
+        <option>High</option>
+        <option>Medium</option>
+        <option>Low</option>
+      </select>
+      <label style="flex-direction:row;align-items:center;gap:0.4rem;font-weight:normal">From <input type="date" id="filter-date-from" /></label>
+      <label style="flex-direction:row;align-items:center;gap:0.4rem;font-weight:normal">To <input type="date" id="filter-date-to" /></label>
+      <button id="filter-apply" type="button">Filter</button>
+      <button id="filter-export" type="button">Export to Excel</button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Date Received</th>
+          <th>Customer</th>
+          <th>SKU</th>
+          <th>Plant</th>
+          <th>Type</th>
+          <th>Priority</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="complaints-body">
+        <tr><td colspan="8">Loading...</td></tr>
+      </tbody>
+    </table>
+  </main>
+  <script src="js/auth-guard.js"></script>
+  <script src="js/complaints.js"></script>
+</body>
+</html>

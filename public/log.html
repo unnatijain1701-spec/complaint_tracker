@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Log Complaint — Urban Harvest</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <nav>
+    <a href="log.html">Log Complaint</a>
+    <a href="complaints.html">Complaints</a>
+    <a href="dashboard.html">Dashboard</a>
+    <span class="nav-spacer"></span>
+    <span id="user-info"></span>
+    <a href="#" id="logout-link">Log Out</a>
+  </nav>
+  <main>
+    <h1>Log a Complaint</h1>
+    <div id="message"></div>
+    <form id="complaint-form" enctype="multipart/form-data">
+      <label>
+        Date Received
+        <input type="date" name="date_received" required />
+      </label>
+      <label>
+        Customer Name
+        <input type="text" name="customer_name" required />
+      </label>
+      <label>
+        SKU
+        <input type="text" name="sku" required />
+      </label>
+      <label>
+        Plant
+        <select name="plant" required>
+          <option value="">Select plant</option>
+          <option>Rai</option>
+          <option>Jaipur</option>
+          <option>Bangalore</option>
+          <option>Mumbai</option>
+          <option>Hyderabad</option>
+          <option>Other</option>
+        </select>
+      </label>
+      <label>
+        Complaint Type
+        <select name="complaint_type" required>
+          <option value="">Select type</option>
+          <option>Quality</option>
+          <option>Quantity Shortfall</option>
+          <option>Packaging</option>
+          <option>Delivery Delay</option>
+          <option>Wrong Item</option>
+          <option>Spoilage</option>
+          <option>Other</option>
+        </select>
+      </label>
+      <label>
+        Channel
+        <select name="channel" required>
+          <option value="">Select channel</option>
+          <option>Email</option>
+          <option>Call</option>
+          <option>WhatsApp</option>
+          <option>Portal</option>
+          <option>Other</option>
+        </select>
+      </label>
+      <label>
+        Description
+        <textarea name="description" required></textarea>
+      </label>
+      <label>
+        Assigned To
+        <input type="text" name="assigned_to" />
+      </label>
+      <div id="priority-preview" class="message" style="display:none"></div>
+      <label>
+        Priority (override suggestion if needed)
+        <select name="priority_final" id="priority-final">
+          <option value="">Use suggested priority</option>
+          <option>Critical</option>
+          <option>High</option>
+          <option>Medium</option>
+          <option>Low</option>
+        </select>
+      </label>
+      <label>
+        Attach Images (optional, up to 5, JPEG/PNG/GIF/WebP)
+        <input type="file" name="images" accept="image/jpeg,image/png,image/gif,image/webp" multiple />
+      </label>
+      <button type="submit">Log Complaint</button>
+    </form>
+  </main>
+  <script src="js/auth-guard.js"></script>
+  <script src="js/log.js"></script>
+</body>
+</html>

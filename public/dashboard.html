@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard — Urban Harvest</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+    .card .value { font-size: 1.8rem; font-weight: 700; }
+    .card .label { font-size: 0.85rem; color: var(--color-muted); }
+    .card.overdue .value { color: var(--color-critical); }
+    .charts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+    .chart-box {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    .chart-box h3 { margin-top: 0; font-size: 1rem; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="log.html">Log Complaint</a>
+    <a href="complaints.html">Complaints</a>
+    <a href="dashboard.html">Dashboard</a>
+    <span class="nav-spacer"></span>
+    <span id="user-info"></span>
+    <a href="#" id="logout-link">Log Out</a>
+  </nav>
+  <main>
+    <h1>Dashboard</h1>
+    <div class="cards" id="cards">
+      <div class="card"><div class="value">…</div><div class="label">Total</div></div>
+    </div>
+    <div class="charts">
+      <div class="chart-box"><h3>Open vs Resolved</h3><canvas id="chart-status"></canvas></div>
+      <div class="chart-box"><h3>Complaints by Plant</h3><canvas id="chart-plant"></canvas></div>
+      <div class="chart-box"><h3>Top SKUs</h3><canvas id="chart-sku"></canvas></div>
+      <div class="chart-box"><h3>Trend (last 30 days)</h3><canvas id="chart-trend"></canvas></div>
+    </div>
+  </main>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+  <script src="js/auth-guard.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
