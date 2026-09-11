@@ -25,11 +25,16 @@
       </label>
       <label>
         Customer Name
-        <input type="text" name="customer_name" required />
+        <input type="text" name="customer_name" list="customer-options" autocomplete="off" required />
+        <datalist id="customer-options"></datalist>
       </label>
       <label>
         SKU
         <input type="text" name="sku" required />
+      </label>
+      <label>
+        Invoice Number
+        <input type="text" name="invoice_number" required />
       </label>
       <label>
         Plant

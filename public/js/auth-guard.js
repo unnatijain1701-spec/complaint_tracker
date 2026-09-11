@@ -14,12 +14,21 @@
     if (user.is_admin) {
       const nav = document.querySelector('nav');
       const spacer = document.querySelector('nav .nav-spacer');
-      if (nav && spacer && !document.getElementById('manage-users-link')) {
-        const link = document.createElement('a');
-        link.id = 'manage-users-link';
-        link.href = 'users.html';
-        link.textContent = 'Manage Users';
-        nav.insertBefore(link, spacer);
+      if (nav && spacer) {
+        if (!document.getElementById('manage-customers-link')) {
+          const customersLink = document.createElement('a');
+          customersLink.id = 'manage-customers-link';
+          customersLink.href = 'customers.html';
+          customersLink.textContent = 'Manage Customers';
+          nav.insertBefore(customersLink, spacer);
+        }
+        if (!document.getElementById('manage-users-link')) {
+          const usersLink = document.createElement('a');
+          usersLink.id = 'manage-users-link';
+          usersLink.href = 'users.html';
+          usersLink.textContent = 'Manage Users';
+          nav.insertBefore(usersLink, spacer);
+        }
       }
     }
 

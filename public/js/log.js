@@ -6,6 +6,19 @@ function showMessage(text, type) {
   messageEl.innerHTML = `<div class="message ${type}">${text}</div>`;
 }
 
+async function loadCustomerOptions() {
+  try {
+    const res = await fetch('/api/customers');
+    if (!res.ok) return;
+    const customers = await res.json();
+    const datalist = document.getElementById('customer-options');
+    datalist.innerHTML = customers.map((c) => `<option value="${c.name.replace(/"/g, '&quot;')}"></option>`).join('');
+  } catch (err) {
+    // customer list is a convenience; the field still works as free text
+  }
+}
+loadCustomerOptions();
+
 function debounce(fn, delayMs) {
   let timer;
   return (...args) => {

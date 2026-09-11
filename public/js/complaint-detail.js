@@ -46,11 +46,15 @@ async function loadComplaint() {
     }
     const c = await res.json();
 
+    const sessionRes = await fetch('/api/session');
+    const currentUser = sessionRes.ok ? await sessionRes.json() : null;
+
     const fields = [
       ['Date Received', c.date_received?.slice(0, 10)],
       ['Date Logged', new Date(c.date_logged).toLocaleString()],
       ['Customer', c.customer_name],
       ['SKU', c.sku],
+      ['Invoice Number', c.invoice_number || '—'],
       ['Plant', c.plant],
       ['Complaint Type', c.complaint_type],
       ['Channel', c.channel],
@@ -60,9 +64,9 @@ async function loadComplaint() {
       ['Status', c.status],
       ['Assigned To', c.assigned_to || '—'],
       ['Logged By', c.logged_by || '—'],
-      ['SLA Due', c.sla_due_at ? new Date(c.sla_due_at).toLocaleString() : '—'],
+      ['Due By', c.sla_due_at ? new Date(c.sla_due_at).toLocaleString() : '—'],
       ['Resolution Notes', c.resolution_notes || '—'],
-      ['Resolution Date', c.resolution_date ? new Date(c.resolution_date).toLocaleString() : '—'],
+      ['Closed On', c.resolution_date ? new Date(c.resolution_date).toLocaleString() : '—'],
       ['Root Cause', c.root_cause || '—'],
     ];
 
@@ -80,11 +84,12 @@ async function loadComplaint() {
           .join('')
       : '<p>No attachments.</p>';
 
-    content.innerHTML = `
-      <h2>Complaint #${c.id}</h2>
-      <dl class="field-grid">${fieldHtml}</dl>
-      <h3>Attachments</h3>
-      <div class="attachments">${attachmentsHtml}</div>
+    const isUnassigned = !c.assigned_to || !c.assigned_to.trim();
+    const isAssignedToMe = currentUser && !isUnassigned
+      && c.assigned_to.trim().toLowerCase() === currentUser.name.trim().toLowerCase();
+    const canUpdate = currentUser && (currentUser.is_admin || isUnassigned || isAssignedToMe);
+
+    const updateSectionHtml = canUpdate ? `
       <h3>Update</h3>
       <div id="update-message"></div>
       <form id="update-form">
@@ -110,11 +115,29 @@ async function loadComplaint() {
         </label>
         <button type="submit">Save Update</button>
       </form>
-      <h3>Audit Trail</h3>
-      ${auditTrailHtml(c.audit_log)}
+    ` : `
+      <h3>Update</h3>
+      <p>Only ${escapeHtml(c.assigned_to)} or an admin can update this complaint.</p>
     `;
 
-    document.getElementById('update-form').addEventListener('submit', handleUpdateSubmit);
+    content.innerHTML = `
+      <h2>Complaint #${c.id}</h2>
+      <dl class="field-grid">${fieldHtml}</dl>
+      <h3>Attachments</h3>
+      <div class="attachments">${attachmentsHtml}</div>
+      ${updateSectionHtml}
+      <h3>Audit Trail</h3>
+      ${auditTrailHtml(c.audit_log)}
+      ${currentUser && currentUser.is_admin ? `
+        <h3>Danger Zone</h3>
+        <button type="button" id="delete-complaint" style="background:var(--color-critical)">Delete Complaint</button>
+      ` : ''}
+    `;
+
+    const updateForm = document.getElementById('update-form');
+    if (updateForm) updateForm.addEventListener('submit', handleUpdateSubmit);
+    const deleteBtn = document.getElementById('delete-complaint');
+    if (deleteBtn) deleteBtn.addEventListener('click', handleDeleteComplaint);
   } catch (err) {
     content.innerHTML = '<div class="message error">Network error.</div>';
   }
@@ -144,6 +167,22 @@ async function handleUpdateSubmit(e) {
     loadComplaint();
   } catch (err) {
     messageEl.innerHTML = '<div class="message error">Network error.</div>';
+  }
+}
+
+async function handleDeleteComplaint() {
+  if (!confirm(`Delete complaint #${complaintId} permanently? This cannot be undone.`)) return;
+
+  try {
+    const res = await fetch(`/api/complaints/${complaintId}`, { method: 'DELETE' });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      alert(data.error || 'Failed to delete complaint.');
+      return;
+    }
+    window.location.href = 'complaints.html';
+  } catch (err) {
+    alert('Network error.');
   }
 }
 

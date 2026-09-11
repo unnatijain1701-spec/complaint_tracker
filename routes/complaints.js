@@ -1,10 +1,12 @@
 const express = require('express');
 const fs = require('fs');
+const path = require('path');
 const ExcelJS = require('exceljs');
 const db = require('../db');
-const { upload } = require('../middleware/upload');
+const { upload, UPLOAD_DIR } = require('../middleware/upload');
 const { PRIORITIES, getRecurrenceCount, computeSuggestedPriority, computeSlaDueAt } = require('../lib/priority');
 const { sendImmediateAlertIfNeeded } = require('../lib/alerts');
+const { requireAdmin } = require('../middleware/session');
 
 const router = express.Router();
 
@@ -74,7 +76,7 @@ function buildComplaintFilterQuery(query) {
   if (search) {
     params.push(`%${search}%`);
     const i = params.length;
-    clauses.push(`(customer_name ILIKE $${i} OR sku ILIKE $${i} OR description ILIKE $${i})`);
+    clauses.push(`(customer_name ILIKE $${i} OR sku ILIKE $${i} OR description ILIKE $${i} OR invoice_number ILIKE $${i})`);
   }
 
   return { where: clauses.length ? `WHERE ${clauses.join(' AND ')}` : '', params };
@@ -82,7 +84,7 @@ function buildComplaintFilterQuery(query) {
 
 function validateComplaintInput(body) {
   const errors = [];
-  const required = ['date_received', 'customer_name', 'sku', 'plant', 'complaint_type', 'channel', 'description'];
+  const required = ['date_received', 'customer_name', 'sku', 'plant', 'complaint_type', 'channel', 'description', 'invoice_number'];
   for (const field of required) {
     if (!body[field] || String(body[field]).trim() === '') {
       errors.push(`${field} is required`);
@@ -146,6 +148,7 @@ router.post('/', uploadImages, async (req, res, next) => {
       complaint_type,
       channel,
       description,
+      invoice_number,
       assigned_to,
       priority_final,
     } = req.body;
@@ -166,12 +169,12 @@ router.post('/', uploadImages, async (req, res, next) => {
 
       const complaintResult = await client.query(
         `INSERT INTO complaints
-          (date_received, customer_name, sku, plant, complaint_type, channel, description, assigned_to, logged_by,
-           priority_suggested, priority_final, sla_due_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+          (date_received, customer_name, sku, plant, complaint_type, channel, description, invoice_number,
+           assigned_to, logged_by, priority_suggested, priority_final, sla_due_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
          RETURNING *`,
         [
-          date_received, customer_name, sku, plant, complaint_type, channel, description,
+          date_received, customer_name, sku, plant, complaint_type, channel, description, invoice_number,
           assigned_to || null, logged_by || null, prioritySuggested, finalPriority, slaDueAt,
         ]
       );
@@ -228,14 +231,15 @@ const EXPORT_COLUMNS = [
   { header: 'Complaint Type', key: 'complaint_type', width: 18 },
   { header: 'Channel', key: 'channel', width: 12 },
   { header: 'Description', key: 'description', width: 40 },
+  { header: 'Invoice Number', key: 'invoice_number', width: 18 },
   { header: 'Priority (Suggested)', key: 'priority_suggested', width: 18 },
   { header: 'Priority (Final)', key: 'priority_final', width: 16 },
   { header: 'Status', key: 'status', width: 14 },
   { header: 'Assigned To', key: 'assigned_to', width: 16 },
   { header: 'Logged By', key: 'logged_by', width: 16 },
-  { header: 'SLA Due', key: 'sla_due_at', width: 20 },
+  { header: 'Due By', key: 'sla_due_at', width: 20 },
   { header: 'Resolution Notes', key: 'resolution_notes', width: 30 },
-  { header: 'Resolution Date', key: 'resolution_date', width: 20 },
+  { header: 'Closed On', key: 'resolution_date', width: 20 },
   { header: 'Root Cause', key: 'root_cause', width: 20 },
 ];
 
@@ -305,6 +309,17 @@ router.patch('/:id', async (req, res, next) => {
       }
       const before = existing.rows[0];
 
+      // Only the assigned person or an admin may update an already-assigned
+      // complaint. An unassigned complaint can be updated by anyone, so it
+      // can be claimed/assigned in the first place.
+      const isUnassigned = !before.assigned_to || !before.assigned_to.trim();
+      const isAssignedToMe = !isUnassigned
+        && before.assigned_to.trim().toLowerCase() === req.session.user.name.trim().toLowerCase();
+      if (!req.session.user.is_admin && !isUnassigned && !isAssignedToMe) {
+        await client.query('ROLLBACK');
+        return res.status(403).json({ error: 'Only the assigned person or an admin can update this complaint' });
+      }
+
       const setClauses = [];
       const params = [];
       for (const [field, value] of Object.entries(updates)) {
@@ -339,6 +354,32 @@ router.patch('/:id', async (req, res, next) => {
     } finally {
       client.release();
     }
+  } catch (err) {
+    next(err);
+  }
+});
+
+// DELETE /api/complaints/:id — admin only. Removes the complaint row
+// (attachments and audit_log rows cascade via FK), then best-effort
+// removes the attached files from disk.
+router.delete('/:id', requireAdmin, async (req, res, next) => {
+  try {
+    const attachments = await db.query(
+      'SELECT file_path FROM attachments WHERE complaint_id = $1',
+      [req.params.id]
+    );
+    const result = await db.query('DELETE FROM complaints WHERE id = $1 RETURNING id', [req.params.id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Complaint not found' });
+    }
+
+    await Promise.all(
+      attachments.rows.map((a) =>
+        fs.promises.unlink(path.join(UPLOAD_DIR, a.file_path)).catch(() => {})
+      )
+    );
+
+    res.status(204).end();
   } catch (err) {
     next(err);
   }
