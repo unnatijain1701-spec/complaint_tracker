@@ -175,3 +175,31 @@ tr.overdue {
 .required-mark {
   color: var(--color-critical);
 }
+
+.selected-files {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.file-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #f0f0ee;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 0.25rem 0.5rem 0.25rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+.file-chip button {
+  align-self: auto;
+  padding: 0;
+  width: 1.2rem;
+  height: 1.2rem;
+  line-height: 1;
+  background: var(--color-critical);
+  border-radius: 50%;
+  font-size: 0.85rem;
+}

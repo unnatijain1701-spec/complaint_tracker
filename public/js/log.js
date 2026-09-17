@@ -30,6 +30,38 @@ complaintTypeSelect.addEventListener('change', () => {
   if (!isOther) complaintTypeOtherInput.value = '';
 });
 
+const imagesInput = document.getElementById('images-input');
+const selectedFilesEl = document.getElementById('selected-files');
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str ?? '';
+  return div.innerHTML;
+}
+
+function renderSelectedFiles() {
+  const files = Array.from(imagesInput.files);
+  selectedFilesEl.innerHTML = files
+    .map(
+      (f, i) => `<span class="file-chip">${escapeHtml(f.name)} <button type="button" class="remove-file" data-index="${i}" aria-label="Remove ${escapeHtml(f.name)}">&times;</button></span>`
+    )
+    .join('');
+  selectedFilesEl.querySelectorAll('.remove-file').forEach((btn) => {
+    btn.addEventListener('click', () => removeSelectedFile(Number(btn.dataset.index)));
+  });
+}
+
+function removeSelectedFile(indexToRemove) {
+  const dt = new DataTransfer();
+  Array.from(imagesInput.files).forEach((file, i) => {
+    if (i !== indexToRemove) dt.items.add(file);
+  });
+  imagesInput.files = dt.files;
+  renderSelectedFiles();
+}
+
+imagesInput.addEventListener('change', renderSelectedFiles);
+
 function debounce(fn, delayMs) {
   let timer;
   return (...args) => {
@@ -93,6 +125,7 @@ form.addEventListener('submit', async (e) => {
     showMessage(`Complaint #${data.id} logged successfully.`, 'success');
     form.reset();
     previewEl.style.display = 'none';
+    selectedFilesEl.innerHTML = '';
   } catch (err) {
     showMessage('Network error — could not reach the server.', 'error');
   }

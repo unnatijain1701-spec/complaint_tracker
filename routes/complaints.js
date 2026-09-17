@@ -33,6 +33,7 @@ const COMPLAINT_TYPES = [
   'Delivery Delay',
   'Wrong Item',
   'Spoilage',
+  'Temperature Issue',
   'Other',
 ];
 const CHANNELS = ['Email', 'Call', 'WhatsApp', 'Portal', 'Other'];

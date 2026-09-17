@@ -58,6 +58,7 @@
           <option>Delivery Delay</option>
           <option>Wrong Item</option>
           <option>Spoilage</option>
+          <option>Temperature Issue</option>
           <option>Other</option>
         </select>
       </label>
@@ -97,8 +98,9 @@
       </label>
       <label>
         Attach Images (optional, up to 5, JPEG/PNG/GIF/WebP)
-        <input type="file" name="images" accept="image/jpeg,image/png,image/gif,image/webp" multiple />
+        <input type="file" name="images" id="images-input" accept="image/jpeg,image/png,image/gif,image/webp" multiple />
       </label>
+      <div id="selected-files" class="selected-files"></div>
       <button type="submit">Log Complaint</button>
     </form>
   </main>
