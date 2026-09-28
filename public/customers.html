@@ -17,7 +17,40 @@
   </nav>
   <main>
     <h1>Manage Customers</h1>
-    <div id="content">Loading...</div>
+    <div id="load-error"></div>
+    <p id="customer-count">Loading...</p>
+
+    <table>
+      <thead><tr><th>Name</th><th>Plant</th><th></th></tr></thead>
+      <tbody id="customers-tbody"></tbody>
+    </table>
+
+    <h2>Add a Customer</h2>
+    <div id="add-message"></div>
+    <form id="add-customer-form">
+      <label>
+        Customer Name
+        <input type="text" name="name" required />
+      </label>
+      <label>
+        Plant
+        <select name="plant" id="add-plant" required>
+          <option value="">Select plant</option>
+        </select>
+      </label>
+      <button type="submit">Add Customer</button>
+    </form>
+
+    <h2>Import from Excel</h2>
+    <p id="import-help"></p>
+    <div id="import-message"></div>
+    <form id="import-form">
+      <label>
+        Excel File
+        <input type="file" name="file" accept=".xlsx" required />
+      </label>
+      <button type="submit">Import</button>
+    </form>
   </main>
   <script src="js/auth-guard.js"></script>
   <script src="js/customers.js"></script>

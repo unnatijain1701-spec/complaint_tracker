@@ -6,9 +6,10 @@ function showMessage(text, type) {
   messageEl.innerHTML = `<div class="message ${type}">${text}</div>`;
 }
 
-async function loadCustomerOptions() {
+async function loadCustomerOptions(plant) {
   try {
-    const res = await fetch('/api/customers');
+    const url = plant ? `/api/customers?plant=${encodeURIComponent(plant)}` : '/api/customers';
+    const res = await fetch(url);
     if (!res.ok) return;
     const customers = await res.json();
     const datalist = document.getElementById('customer-options');
@@ -18,6 +19,9 @@ async function loadCustomerOptions() {
   }
 }
 loadCustomerOptions();
+
+const plantSelect = document.getElementById('plant');
+plantSelect.addEventListener('change', () => loadCustomerOptions(plantSelect.value));
 
 const complaintTypeSelect = document.getElementById('complaint-type');
 const complaintTypeOtherLabel = document.getElementById('complaint-type-other-label');
