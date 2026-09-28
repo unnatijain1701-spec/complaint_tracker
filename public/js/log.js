@@ -151,4 +151,4 @@ form.addEventListener('submit', async (e) => {
   } catch (err) {
     showMessage('Network error — could not reach the server.', 'error');
   }
-});s
+});
