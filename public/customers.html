@@ -18,9 +18,18 @@
   <main>
     <h1>Manage Customers</h1>
     <div id="load-error"></div>
-    <p id="customer-count">Loading...</p>
 
-    <table>
+    <label>
+      View Customers for Plant
+      <select id="view-plant">
+        <option value="">Select plant</option>
+      </select>
+    </label>
+    <button type="button" id="show-customers-btn">Show Customers</button>
+
+    <p id="customer-count"></p>
+
+    <table id="customers-table" style="display:none">
       <thead><tr><th>Name</th><th>Plant</th><th></th></tr></thead>
       <tbody id="customers-tbody"></tbody>
     </table>

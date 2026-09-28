@@ -37,9 +37,8 @@
       </label>
       <label>
         Customer Name <span class="required-mark">*</span>
-        <select name="customer_name" id="customer-name" required disabled>
-          <option value="">Select plant first</option>
-        </select>
+        <input type="text" name="customer_name" id="customer-name" list="customer-options" autocomplete="off" required disabled placeholder="Select plant first" />
+        <datalist id="customer-options"></datalist>
       </label>
       <label>
         SKU <span class="required-mark">*</span>

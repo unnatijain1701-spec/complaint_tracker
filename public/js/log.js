@@ -7,31 +7,34 @@ function showMessage(text, type) {
 }
 
 const plantSelect = document.getElementById('plant');
-const customerSelect = document.getElementById('customer-name');
+const customerInput = document.getElementById('customer-name');
+const customerOptionsEl = document.getElementById('customer-options');
 
-function resetCustomerSelect(placeholder) {
-  customerSelect.innerHTML = `<option value="">${placeholder}</option>`;
-  customerSelect.disabled = true;
+function resetCustomerInput(placeholder) {
+  customerInput.value = '';
+  customerInput.placeholder = placeholder;
+  customerInput.disabled = true;
+  customerOptionsEl.innerHTML = '';
 }
 
 async function loadCustomerOptions(plant) {
   if (!plant) {
-    resetCustomerSelect('Select plant first');
+    resetCustomerInput('Select plant first');
     return;
   }
+  customerInput.value = '';
+  customerInput.disabled = false;
+  customerInput.placeholder = 'Start typing a customer name';
   try {
     const res = await fetch(`/api/customers?plant=${encodeURIComponent(plant)}`);
     if (!res.ok) {
-      resetCustomerSelect('Select customer');
+      customerOptionsEl.innerHTML = '';
       return;
     }
     const customers = await res.json();
-    customerSelect.innerHTML = customers.length
-      ? `<option value="">Select customer</option>${customers.map((c) => `<option value="${escapeHtml(c.name)}">${escapeHtml(c.name)}</option>`).join('')}`
-      : '<option value="">No customers for this plant yet</option>';
-    customerSelect.disabled = false;
+    customerOptionsEl.innerHTML = customers.map((c) => `<option value="${escapeHtml(c.name)}"></option>`).join('');
   } catch (err) {
-    resetCustomerSelect('Select customer');
+    // suggestions are a convenience; the field still works as free text
   }
 }
 
@@ -142,10 +145,10 @@ form.addEventListener('submit', async (e) => {
 
     showMessage(`Complaint #${data.id} logged successfully.`, 'success');
     form.reset();
-    resetCustomerSelect('Select plant first');
+    resetCustomerInput('Select plant first');
     previewEl.style.display = 'none';
     selectedFilesEl.innerHTML = '';
   } catch (err) {
     showMessage('Network error — could not reach the server.', 'error');
   }
-});
+});s
