@@ -98,3 +98,31 @@ async function handleImport(e) {
     const unrecognizedNote = data.unrecognizedSheets && data.unrecognizedSheets.length
       ? ` Skipped sheet(s) not named after a plant: ${data.unrecognizedSheets.map(escapeHtml).join(', ')}.`
       : '';
+    messageEl.innerHTML = `<div class="message success">Added ${data.added}, skipped ${data.skipped} duplicate(s), out of ${data.total} found in the file.${unrecognizedNote}</div>`;
+    e.target.reset();
+    loadCustomers();
+  } catch (err) {
+    messageEl.innerHTML = '<div class="message error">Network error.</div>';
+  }
+}
+
+async function handleDeleteCustomer(id, name) {
+  if (!confirm(`Remove "${name}" from the customer list?`)) return;
+
+  try {
+    const res = await fetch(`/api/customers/${id}`, { method: 'DELETE' });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      alert(data.error || 'Failed to remove customer.');
+      return;
+    }
+    loadCustomers();
+  } catch (err) {
+    alert('Network error.');
+  }
+}
+
+document.getElementById('add-customer-form').addEventListener('submit', handleAddCustomer);
+document.getElementById('import-form').addEventListener('submit', handleImport);
+
+loadCustomers();
