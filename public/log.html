@@ -24,19 +24,6 @@
         <input type="date" name="date_received" required />
       </label>
       <label>
-        Customer Name <span class="required-mark">*</span>
-        <input type="text" name="customer_name" list="customer-options" autocomplete="off" required />
-        <datalist id="customer-options"></datalist>
-      </label>
-      <label>
-        SKU <span class="required-mark">*</span>
-        <input type="text" name="sku" required />
-      </label>
-      <label>
-        Invoice Number <span class="required-mark">*</span>
-        <input type="text" name="invoice_number" required />
-      </label>
-      <label>
         Plant <span class="required-mark">*</span>
         <select name="plant" id="plant" required>
           <option value="">Select plant</option>
@@ -47,6 +34,20 @@
           <option>Hyderabad</option>
           <option>Other</option>
         </select>
+      </label>
+      <label>
+        Customer Name <span class="required-mark">*</span>
+        <select name="customer_name" id="customer-name" required disabled>
+          <option value="">Select plant first</option>
+        </select>
+      </label>
+      <label>
+        SKU <span class="required-mark">*</span>
+        <input type="text" name="sku" required />
+      </label>
+      <label>
+        Invoice Number <span class="required-mark">*</span>
+        <input type="text" name="invoice_number" required />
       </label>
       <label>
         Complaint Type <span class="required-mark">*</span>

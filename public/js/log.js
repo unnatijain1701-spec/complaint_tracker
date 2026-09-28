@@ -6,21 +6,35 @@ function showMessage(text, type) {
   messageEl.innerHTML = `<div class="message ${type}">${text}</div>`;
 }
 
+const plantSelect = document.getElementById('plant');
+const customerSelect = document.getElementById('customer-name');
+
+function resetCustomerSelect(placeholder) {
+  customerSelect.innerHTML = `<option value="">${placeholder}</option>`;
+  customerSelect.disabled = true;
+}
+
 async function loadCustomerOptions(plant) {
+  if (!plant) {
+    resetCustomerSelect('Select plant first');
+    return;
+  }
   try {
-    const url = plant ? `/api/customers?plant=${encodeURIComponent(plant)}` : '/api/customers';
-    const res = await fetch(url);
-    if (!res.ok) return;
+    const res = await fetch(`/api/customers?plant=${encodeURIComponent(plant)}`);
+    if (!res.ok) {
+      resetCustomerSelect('Select customer');
+      return;
+    }
     const customers = await res.json();
-    const datalist = document.getElementById('customer-options');
-    datalist.innerHTML = customers.map((c) => `<option value="${c.name.replace(/"/g, '&quot;')}"></option>`).join('');
+    customerSelect.innerHTML = customers.length
+      ? `<option value="">Select customer</option>${customers.map((c) => `<option value="${escapeHtml(c.name)}">${escapeHtml(c.name)}</option>`).join('')}`
+      : '<option value="">No customers for this plant yet</option>';
+    customerSelect.disabled = false;
   } catch (err) {
-    // customer list is a convenience; the field still works as free text
+    resetCustomerSelect('Select customer');
   }
 }
-loadCustomerOptions();
 
-const plantSelect = document.getElementById('plant');
 plantSelect.addEventListener('change', () => loadCustomerOptions(plantSelect.value));
 
 const complaintTypeSelect = document.getElementById('complaint-type');
@@ -128,6 +142,7 @@ form.addEventListener('submit', async (e) => {
 
     showMessage(`Complaint #${data.id} logged successfully.`, 'success');
     form.reset();
+    resetCustomerSelect('Select plant first');
     previewEl.style.display = 'none';
     selectedFilesEl.innerHTML = '';
   } catch (err) {
