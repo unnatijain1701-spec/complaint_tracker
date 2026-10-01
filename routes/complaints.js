@@ -125,7 +125,7 @@ router.post('/preview', async (req, res, next) => {
       score,
       auto_critical: autoCritical,
       recurrence_count: recurrenceCount,
-      sla_due_at: computeSlaDueAt(priority),
+      sla_due_at: await computeSlaDueAt(priority),
     });
   } catch (err) {
     next(err);
@@ -166,7 +166,7 @@ router.post('/', uploadImages, async (req, res, next) => {
       recurrenceCount,
     });
     const finalPriority = priority_final || prioritySuggested;
-    const slaDueAt = computeSlaDueAt(finalPriority);
+    const slaDueAt = await computeSlaDueAt(finalPriority);
 
     const client = await db.pool.connect();
     try {

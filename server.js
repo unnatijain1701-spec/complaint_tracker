@@ -7,6 +7,7 @@ const dashboardRouter = require('./routes/dashboard');
 const authRouter = require('./routes/auth');
 const usersRouter = require('./routes/users');
 const customersRouter = require('./routes/customers');
+const settingsRouter = require('./routes/settings');
 const { UPLOAD_DIR } = require('./middleware/upload');
 const { sessionMiddleware, requireAuth, requireAdmin } = require('./middleware/session');
 
@@ -32,6 +33,7 @@ app.use('/api/complaints', requireAuth, complaintsRouter);
 app.use('/api/dashboard', requireAuth, dashboardRouter);
 app.use('/api/users', requireAdmin, usersRouter);
 app.use('/api/customers', requireAuth, customersRouter);
+app.use('/api/settings', requireAuth, settingsRouter);
 
 app.get('/api/health', (req, res) => {
   res.json({ ok: true });

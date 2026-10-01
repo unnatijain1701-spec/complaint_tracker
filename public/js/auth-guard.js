@@ -29,6 +29,15 @@
           usersLink.textContent = 'Manage Users';
           nav.insertBefore(usersLink, spacer);
         }
+        if (!document.getElementById('settings-link')) {
+          const settingsLink = document.createElement('a');
+          settingsLink.id = 'settings-link';
+          settingsLink.href = 'settings.html';
+          settingsLink.title = 'Settings';
+          settingsLink.setAttribute('aria-label', 'Settings');
+          settingsLink.textContent = '⚙️';
+          nav.insertBefore(settingsLink, spacer);
+        }
       }
     }
 
