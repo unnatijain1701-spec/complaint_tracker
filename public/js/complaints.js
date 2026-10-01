@@ -35,7 +35,7 @@ function currentFilterParams() {
 }
 
 async function loadComplaints() {
-  tbody.innerHTML = '<tr><td colspan="8">Loading...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="9">Loading...</td></tr>';
 
   const params = currentFilterParams();
 
@@ -44,12 +44,12 @@ async function loadComplaints() {
     const rows = await res.json();
 
     if (!res.ok) {
-      tbody.innerHTML = `<tr><td colspan="8">Error loading complaints.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="9">Error loading complaints.</td></tr>`;
       return;
     }
 
     if (rows.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="8">No complaints found.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="9">No complaints found.</td></tr>';
       return;
     }
 
@@ -67,6 +67,7 @@ async function loadComplaints() {
         <td>${escapeHtml(r.complaint_type)}</td>
         <td>${priorityBadge(r.priority_final)}</td>
         <td>${escapeHtml(r.status)}${isOverdue ? ' <span class="priority-badge priority-Critical">OVERDUE</span>' : ''}</td>
+        <td><button type="button" class="update-status-btn btn-sm" data-id="${r.id}">Update Status</button></td>
       </tr>`;
       })
       .join('');
@@ -76,8 +77,15 @@ async function loadComplaints() {
         window.location.href = `complaint-detail.html?id=${row.dataset.id}`;
       });
     });
+
+    tbody.querySelectorAll('.update-status-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        window.location.href = `complaint-detail.html?id=${btn.dataset.id}`;
+      });
+    });
   } catch (err) {
-    tbody.innerHTML = '<tr><td colspan="8">Network error.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9">Network error.</td></tr>';
   }
 }
 
